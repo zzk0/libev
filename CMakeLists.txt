@@ -5,25 +5,30 @@
 # Please note that the package source code is licensed under its own license.
 
 project ( libev C )
+
+if(APPLE)
+  set(CMAKE_MACOSX_RPATH 1)
+endif()
+
+
 cmake_minimum_required ( VERSION 2.8 )
 include ( cmake/dist.cmake )
 include ( configure )
 
-configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-set ( EV_SRC 
+set (EV_SRC
   ev.c
   event.c
 )
 
-if (WIN32) 
-  list ( APPEND EV_LIBS Ws2_32 )
-endif ()
+if(WIN32)
+  list(APPEND EV_LIBS Ws2_32)
+endif()
 
-add_library ( ev ${EV_SRC} )
-target_link_libraries ( ev ${EV_LIBS} )
+add_library(ev ${EV_SRC})
+target_link_libraries (ev ${EV_LIBS})
+target_include_directories(ev PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(ev PUBLIC libev)
 
-install_library ( ev )
-install_header ( ev.h ev++.h event.h )
-install_data ( LICENSE README )
+add_library(ev::ev ALIAS ev)
